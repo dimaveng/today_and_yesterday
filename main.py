@@ -7,7 +7,7 @@ import pyglet
 pyglet.font.add_file("./Minecraft_1.1.ttf")
 
 window = Tk()
-window.geometry("400x650")
+window.geometry("600x650")
 window.title("РОЗКЛАД ЗАНЯТЬ")
 
 schedule = {
@@ -23,6 +23,19 @@ schedule = {
     "П'ятниця": ["Фізична культура", "Біологія", "Хімія",
                  "Історія України/Громад. освіта", "Українська мова", "Алгебра",
                  "Зарубіжна література"],
+}
+
+times = {
+    "Понеділок": ["10:50-11:35", "11:45-12:30", "12:40-13:25", "13:40-14:25",
+                  "14:35-15:20", "15:25-16:10", "16:15-17:00"],
+    "Вівторок":  ["11:45-12:30", "12:40-13:25", "13:40-14:25", "14:35-15:20",
+                  "15:25-16:10", "16:15-17:00", "17:05-17:45"],
+    "Середа":    ["11:45-12:30", "12:40-13:25", "13:40-14:25", "14:35-15:20",
+                  "15:25-16:10", "16:15-17:00", "17:05-17:45"],
+    "Четвер":    ["10:50-11:35", "11:45-12:30", "12:40-13:25", "13:40-14:25",
+                  "14:35-15:20", "15:25-16:10", "16:15-17:00"],
+    "П'ятниця":  ["10:50-11:35", "11:45-12:30", "12:40-13:25", "13:40-14:25",
+                  "14:35-15:20", "15:25-16:10", "16:15-17:00"],
 }
 
 HW_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "homework.json")
@@ -54,6 +67,7 @@ def show_day(day):
     global current_day
     current_day = day
     for i in range(7):
+        time_labels[i].config(text=times[day][i])
         lesson_labels[i].config(text=f"Урок {i + 1}: {schedule[day][i]}")
         hw = homework[day][i]
         hw_labels[i].config(text="ДЗ: " + (hw if hw else "—"))
@@ -73,16 +87,24 @@ def edit_homework(i):
         show_day(current_day)
 
 lesson_labels = []
+time_labels = []
 hw_labels = []
 
 for i in range(7):
-    lesson = Label(window, text=f"Урок {i + 1}: оберіть день",
-                   font=("Minecraft 1.1", 12))
-    lesson.pack()
+    row = Frame(window)
+    row.pack(fill=X)
+
+    time_label = Label(row, text="--:--", font=("Minecraft 1.1", 12), width=12)
+    time_label.pack(side=LEFT)
+    time_labels.append(time_label)
+
+    lesson = Label(row, text=f"Урок {i + 1}: оберіть день",
+                   font=("Minecraft 1.1", 12), anchor="w")
+    lesson.pack(side=LEFT)
     lesson_labels.append(lesson)
 
     hw = Label(window, text="", font=("Minecraft 1.1", 10),
-               fg="gray", wraplength=380, cursor="hand2")
+               fg="gray", wraplength=530, cursor="hand2")
     hw.pack()
     hw.bind("<Button-1>", lambda event, n=i: edit_homework(n))
     hw_labels.append(hw)
